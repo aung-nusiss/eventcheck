@@ -285,16 +285,20 @@ eventcheck/
 ├── public/
 ├── src/
 │   ├── components/
-│   │   ├── QRScanner.jsx        # QR code scanning component
-│   │   ├── GuestSearch.jsx      # Name/email search fallback
-│   │   ├── GuestList.jsx        # Full guest list with filters
-│   │   ├── WalkInForm.jsx       # Walk-in registration form
-│   │   └── CheckInResult.jsx    # Success/error/duplicate feedback
+│   │   ├── QRScanner.jsx        # Camera-based QR code check-in
+│   │   ├── GuestSearch.jsx      # Real-time name/email search fallback
+│   │   ├── GuestList.jsx        # Full guest list with filters and undo
+│   │   ├── WalkInForm.jsx       # Walk-in guest registration form
+│   │   ├── GuestCard.jsx        # Shared guest row component
+│   │   └── CheckInResult.jsx    # Success/warning/error feedback overlay
+│   ├── context/
+│   │   └── GuestContext.jsx     # Global state (useReducer + Context)
 │   ├── data/
-│   │   └── guests.js            # Mock guest database
-│   ├── App.jsx                  # Main app layout and routing
+│   │   └── guests.js            # Mock guest data + createWalkIn() helper
+│   ├── App.jsx                  # Tab shell and GuestProvider root
+│   ├── App.css                  # (cleared — styling via Tailwind)
 │   └── main.jsx                 # Entry point
-├── README.md                    # This file
+├── README.md
 └── package.json
 ```
 
