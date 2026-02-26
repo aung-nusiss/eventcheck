@@ -238,25 +238,33 @@ sequenceDiagram
 
 ## AI Tool Documentation
 
-*(To be completed during the build — see section below for template)*
-
 ### AI Coding Harness
-- **Tool used:** Claude Code (Anthropic) — CLI-based AI coding assistant.
-- **Setup:** [Describe how you installed and configured Claude Code]
+- **Tool used:** Claude Code (Anthropic) — CLI-based AI coding assistant running directly in the terminal inside the project directory.
+- **Setup:** Installed via `npm install -g @anthropic-ai/claude-code`, then launched with `claude` in the project root. No additional configuration was needed — Claude Code automatically read the project structure and existing files at the start of each session.
 
 ### How I Used AI During the Build
-- [Describe your workflow — e.g., "I used Claude Code to scaffold the project, then iterated on components one at a time."]
-- [Include screenshots or terminal logs]
+
+My workflow was plan-first, then execute. I wrote a detailed implementation plan (component by component, with exact state shape, props, and behaviour) and handed it to Claude Code to implement. This meant I was making the architectural decisions — Claude Code was responsible for translating them into working code.
+
+The process looked like this:
+1. Wrote the full plan (data model, state design, component breakdown, implementation order)
+2. Asked Claude Code to implement the plan in order
+3. Ran `npm run dev` to test in the browser after each major step
+4. Caught issues through testing (blank screen, persistent undo toast) and asked Claude Code to fix specific bugs with clear descriptions of what was wrong
+
+Claude Code ran `npm install`, created all source files, edited `vite.config.js` and `index.css` for Tailwind v4, and fixed bugs when I reported them — all through natural language instructions in the terminal.
 
 ### Example: Where I Changed or Rejected an AI Suggestion
-- **What the AI suggested:** [Describe]
-- **What I did instead:** [Describe]
-- **Why:** [Your reasoning]
+
+- **What the AI suggested:** Claude Code initially set the default active tab to `'scan'` (the QR scanner), which caused the app to show a blank white screen on first load because `html5-qrcode` was crashing during camera initialisation before the user had granted permission.
+- **What I did instead:** I asked Claude Code to change the default tab to `'list'` (the Guest List), so the app always renders useful content on load. I also asked it to refactor `QRScanner` to load `html5-qrcode` via a dynamic `import()` inside the `useEffect`, so any import-time errors are isolated and don't crash the whole app.
+- **Why:** The QR scanner should be opt-in — a staff member opening the app for the first time should see the guest list, not a broken camera view. Defensive loading also makes the app more resilient on devices where camera access is unavailable.
 
 ### Example: Where AI Helped Me Learn Something New
-- **The problem:** [Describe what you were stuck on]
-- **How AI helped:** [Describe]
-- **What I learned:** [Describe]
+
+- **The problem:** The app worked fine in the browser on my Mac but the QR scanner wouldn't activate when I opened it on my iPhone via the local network IP (`http://192.168.1.7:5173`). I assumed it was a permissions issue and kept checking iOS camera settings.
+- **How AI helped:** Claude Code explained that browsers enforce a "secure context" requirement for camera access via `getUserMedia()`. `localhost` gets a special exception, but any other origin — including a local IP address — must be served over HTTPS before the browser will allow camera access. It then walked me through three options to add HTTPS: ngrok, a Cloudflare tunnel, or Vite's `@vitejs/plugin-basic-ssl` for a self-signed certificate.
+- **What I learned:** HTTPS is not just a production concern — it's required for any browser API that accesses sensitive hardware (camera, microphone, geolocation) even on a local network. This is a browser security standard enforced across Chrome, Safari, and Firefox, not an iOS-specific restriction.
 
 ---
 
