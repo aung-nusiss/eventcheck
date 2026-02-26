@@ -114,9 +114,8 @@ Rather than making these guests wait or sending them away, staff can search by n
 | **Data storage** | In-memory (prototype) | For the prototype, guest data is stored in React state. In production, this would be replaced with a database. |
 
 ---
-
 ## Database Schema
-
+```mermaid
 erDiagram
     EVENT {
         string id PK
@@ -137,6 +136,7 @@ erDiagram
     }
 
     EVENT ||--o{ GUEST : "has many"
+```
 
 ---
 
