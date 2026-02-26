@@ -102,6 +102,25 @@ Rather than making these guests wait or sending them away, staff can search by n
 - Support for multi-day events with per-session check-in.
 
 ---
+### Alternative I Considered: Short Numeric Check-in Code
+
+Rather than a QR code, guests could receive a **short numeric code** (e.g. 6 digits) in their confirmation email that staff type into a search box to look them up.
+
+**Why it has merit:**
+- Works when a guest's phone is dead, cracked, or has no signal — the guest can simply memorise or write down the code.
+- No camera hardware or permissions required, making the app simpler to deploy on any device.
+- Faster to type than searching by a full name, and avoids spelling ambiguity.
+- Degrades gracefully — if the guest forgets the code, staff fall back to name/email search exactly as they do today.
+
+**Why I didn't choose it as the primary method:**
+- It introduces a manual input step that adds latency compared to a one-second QR scan — the opposite of what the registration desk needs during peak check-in.
+- Staff can mistype codes under pressure, especially with a queue forming.
+- QR codes already act as the unique identifier in the guest record; adding a second code system would mean maintaining two lookup keys without a clear benefit.
+- The name/email search fallback already covers the "no phone / can't find email" scenario without adding complexity to the confirmation email or the data model.
+
+**Verdict:** The numeric code idea solves a real edge case but trades speed for resilience. Given that the primary goal is fast throughput, QR codes remain the right primary method — with name/email search handling the failure cases the numeric code was meant to address.
+
+---
 
 ## Tech Stack
 
