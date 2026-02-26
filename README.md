@@ -103,6 +103,20 @@ Rather than making these guests wait or sending them away, staff can search by n
 
 ---
 
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **UI Framework** | React |
+| **Build Tool** | Vite |
+| **QR Scanning** | html5-qrcode |
+| **Styling** | Tailwind CSS / CSS Modules |
+| **State Management** | React useState / useContext |
+| **Data Storage** | In-memory (React state) |
+| **Linting** | ESLint |
+
+---
+
 ## Technology Choices
 
 | Decision | Choice | Reasoning |
@@ -136,6 +150,88 @@ erDiagram
     }
 
     EVENT ||--o{ GUEST : "has many"
+```
+
+---
+
+## Sequence Diagrams
+
+### Use Case 1: QR Code Check-in
+
+```mermaid
+sequenceDiagram
+    actor Staff
+    participant App as EventCheck App
+    participant DB as Guest Data
+
+    Staff->>App: Scan guest's QR code
+    App->>DB: Look up guest by QR code ID
+    alt Guest found & not checked in
+        DB-->>App: Guest record
+        App->>DB: Update checkedIn = true, set checkedInAt
+        DB-->>App: Confirm update
+        App-->>Staff: ✅ Success — show guest name, ticket type
+    else Guest found & already checked in
+        DB-->>App: Guest record (checkedIn = true)
+        App-->>Staff: ⚠️ Already checked in — show time of check-in
+    else Guest not found
+        DB-->>App: No match
+        App-->>Staff: ❌ Not found — suggest name search or walk-in
+    end
+```
+
+### Use Case 2: Name/Email Search Fallback
+
+```mermaid
+sequenceDiagram
+    actor Staff
+    participant App as EventCheck App
+    participant DB as Guest Data
+
+    Staff->>App: Type guest name or email in search bar
+    App->>DB: Filter guests matching search query
+    DB-->>App: Return matching guests
+    App-->>Staff: Display list of matching guests
+    Staff->>App: Select correct guest & tap "Check In"
+    App->>DB: Update checkedIn = true, set checkedInAt
+    DB-->>App: Confirm update
+    App-->>Staff: ✅ Success — guest checked in
+```
+
+### Use Case 3: Walk-in Guest Registration
+
+```mermaid
+sequenceDiagram
+    actor Staff
+    participant App as EventCheck App
+    participant DB as Guest Data
+
+    Staff->>App: Click "Register Walk-in"
+    App-->>Staff: Show registration form
+    Staff->>App: Enter name, email, company, ticket type
+    Staff->>App: Submit form
+    App->>DB: Create new guest record
+    App->>DB: Set checkedIn = true, set checkedInAt
+    DB-->>App: Confirm creation
+    App-->>Staff: ✅ Walk-in registered & checked in
+```
+
+### Use Case 4: Undo Check-in
+
+```mermaid
+sequenceDiagram
+    actor Staff
+    participant App as EventCheck App
+    participant DB as Guest Data
+
+    Staff->>App: Open guest list
+    Staff->>App: Find checked-in guest
+    Staff->>App: Click "Undo Check-in"
+    App-->>Staff: Show confirmation prompt
+    Staff->>App: Confirm undo
+    App->>DB: Update checkedIn = false, clear checkedInAt
+    DB-->>App: Confirm update
+    App-->>Staff: ⚠️ Check-in reversed
 ```
 
 ---
