@@ -115,6 +115,31 @@ Rather than making these guests wait or sending them away, staff can search by n
 
 ---
 
+## Database Schema
+
+erDiagram
+    EVENT {
+        string id PK
+        string name
+        date date
+        string location
+    }
+
+    GUEST {
+        string id PK
+        string eventId FK
+        string name
+        string email
+        string company
+        string ticket
+        boolean checkedIn
+        datetime checkedInAt
+    }
+
+    EVENT ||--o{ GUEST : "has many"
+
+---
+
 ## AI Tool Documentation
 
 *(To be completed during the build — see section below for template)*
